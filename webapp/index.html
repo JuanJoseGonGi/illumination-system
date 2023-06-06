@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Illumination System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link ref="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Sistema de iluminación</h1>
+
+  <div class="sensors-container"></div>
+
+  <section class="controllers-container">
+    <div class="controller">
+      <h2>Control de luces</h2>
+      <label for="lightControl" class="toggle">
+        <input type="checkbox" id="lightControl" name="lightControl" value="lightControl">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="controller">
+      <h2>Control de cortinas</h2>
+      <label for="curtainControl" class="toggle">
+        <input type="checkbox" id="curtainControl" name="curtainControl" value="curtainControl">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
