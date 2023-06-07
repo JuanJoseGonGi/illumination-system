@@ -23,6 +23,8 @@ func getPortsList() ([]string, error) {
 		return nil, fmt.Errorf("no ports found")
 	}
 
+	log.Info("found ports", "ports", ports)
+
 	return ports, nil
 }
 
@@ -31,6 +33,8 @@ func openPort(portName string) (serial.Port, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open port: %w", err)
 	}
+
+	log.Info("opened port", "port", portName)
 
 	return port, nil
 }
@@ -77,6 +81,16 @@ func setCurtainsState(state state) error {
 	err := sendSerial(msg)
 	if err != nil {
 		return fmt.Errorf("failed to set curtains state: %w", err)
+	}
+
+	return nil
+}
+
+func setBlindsState(state state) error {
+	msg := []byte(fmt.Sprintf("blinds %s\n", state))
+	err := sendSerial(msg)
+	if err != nil {
+		return fmt.Errorf("failed to set blinds state: %w", err)
 	}
 
 	return nil

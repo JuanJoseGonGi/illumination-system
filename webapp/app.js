@@ -3,7 +3,7 @@ const STATES = {
   off: "off",
 }
 
-const API_DOMAIN = "http://localhost:8080";
+const API_DOMAIN = "http://localhost:3001";
 
 /**
  * Realiza una petición a la API.
@@ -92,11 +92,33 @@ async function changeCurtainState(state) {
 function curtainControlHandler(event) {
   const curtainControl = event.target;
   if (curtainControl.checked) {
-    changeCurtainState(STATES.ON).catch(handleError);
+    changeCurtainState(STATES.on).catch(handleError);
     return;
   }
 
-  changeCurtainState(STATES.OFF).catch(handleError);
+  changeCurtainState(STATES.off).catch(handleError);
+}
+
+async function changeBlindState(state) {
+  if (!Object.prototype.hasOwnProperty.call(STATES, state)) {
+    throw new Error("Estado inválido.");
+  }
+
+  const body = {
+    state,
+  }
+
+  await apiRequest("/blinds", "PUT", body);
+}
+
+function blindControlHandler(event) {
+  const blindControl = event.target;
+  if (blindControl.checked) {
+    changeBlindState(STATES.on).catch(handleError);
+    return;
+  }
+
+  changeBlindState(STATES.off).catch(handleError);
 }
 
 function handleError(error) {
@@ -116,8 +138,15 @@ function main() {
     return;
   }
 
+  const blindControl = document.getElementById("blindControl");
+  if (!blindControl) {
+    handleError(new Error("No se encontró el control de persianas."));
+    return;
+  }
+
   lightControl.addEventListener("change", lightControlHandler);
   curtainControl.addEventListener("change", curtainControlHandler);
+  blindControl.addEventListener("change", blindControlHandler);
 }
 
 document.addEventListener("DOMContentLoaded", main);

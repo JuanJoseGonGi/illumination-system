@@ -14,7 +14,7 @@ import (
 var mux = http.NewServeMux()
 
 var server = &http.Server{
-	Addr:    ":8080",
+	Addr:    ":3001",
 	Handler: mux,
 }
 
@@ -171,9 +171,67 @@ func curtainsHandler() http.HandlerFunc {
 	}
 }
 
+func handleBlindsPut(w http.ResponseWriter, r *http.Request) {
+	input := putInput{}
+
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(respInvalidInput))
+
+		log.Error(respInvalidInput, "err", err)
+
+		return
+	}
+
+	err := setBlindsState(input.State)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(respInternalError))
+
+		log.Error(respInternalError, "err", err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("blinds are open"))
+}
+
+func handleBlindsGet(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("blinds are open"))
+}
+
+func blindsHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Methods", "PUT, GET, OPTIONS")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		if r.Method == http.MethodPut && r.Body != nil {
+			handleBlindsPut(w, r)
+			return
+		}
+
+		if r.Method == http.MethodGet {
+			handleBlindsGet(w, r)
+			return
+		}
+
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte(respInvalidMethod))
+
+		log.Error(respInvalidMethod, "method", r.Method)
+	}
+}
+
 func initServer() {
 	mux.Handle("/lights", lightsHandler())
 	mux.Handle("/curtains", curtainsHandler())
+	mux.Handle("/blinds", blindsHandler())
 
 	log.Info("starting server", "port", server.Addr)
 
