@@ -58,6 +58,61 @@ func decodePutInputJSON(body io.ReadCloser) (putInput, error) {
 	return input, nil
 }
 
+func handleLightsModePut(w http.ResponseWriter, r *http.Request) {
+	input, err := decodePutInputJSON(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(respInvalidInput))
+
+		log.Error(respInvalidInput, "err", err)
+		return
+	}
+
+	err = setLightsModeState(input.State)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(respInternalError))
+
+		log.Error(respInternalError, "err", err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("lights are on automatic state"))
+}
+
+func handleLightsModeGet(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("lights are on automatic state"))
+}
+
+func lightsModeHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Methods", "PUT, GET, OPTIONS")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		if r.Method == http.MethodPut && r.Body != nil {
+			handleLightsModePut(w, r)
+			return
+		}
+
+		if r.Method == http.MethodGet {
+			handleLightsModeGet(w, r)
+			return
+		}
+
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte(respInvalidMethod))
+
+		log.Error(respInvalidMethod, "method", r.Method)
+	}
+}
+
 func handleLightsPut(w http.ResponseWriter, r *http.Request) {
 	input, err := decodePutInputJSON(r.Body)
 	if err != nil {
@@ -229,6 +284,7 @@ func blindsHandler() http.HandlerFunc {
 }
 
 func initServer() {
+	mux.Handle("/lights/mode", lightsModeHandler())
 	mux.Handle("/lights", lightsHandler())
 	mux.Handle("/curtains", curtainsHandler())
 	mux.Handle("/blinds", blindsHandler())

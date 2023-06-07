@@ -16,7 +16,21 @@ body {
   place-items: center;
 }
 
+.toggle-container {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2rem;
+  place-items: center;
+  margin: 1rem 0;
+}
+
+.toggle-label {
+  flex: 0 1 auto;
+}
+
 .toggle {
+  flex: 0 1 auto;
   position: relative;
   display: inline-block;
   width: 60px;

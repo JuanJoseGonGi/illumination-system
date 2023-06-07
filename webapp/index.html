@@ -20,25 +20,48 @@
   <section class="controllers-container">
     <div class="controller">
       <h2>Control de luces</h2>
-      <label for="lightControl" class="toggle">
-        <input type="checkbox" id="lightControl" name="lightControl" value="lightControl">
-        <span class="slider"></span>
-      </label>
+
+      <div class="toggle-container">
+        <span class="toggle-label">Manual</span>
+        <label for="lightModeControl" class="toggle">
+          <input type="checkbox" id="lightModeControl" name="lightModeControl" value="lightModeControl">
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Auto</span>
+      </div>
+
+      <div class="toggle-container">
+        <span class="toggle-label">OFF</span>
+        <label for="lightControl" class="toggle">
+          <input type="checkbox" id="lightControl" name="lightControl" value="lightControl">
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">ON</span>
+      </div>
     </div>
 
     <div class="controller">
       <h2>Control de cortinas</h2>
-      <label for="curtainControl" class="toggle">
-        <input type="checkbox" id="curtainControl" name="curtainControl" value="curtainControl">
-        <span class="slider"></span>
-      </label>
+      <div class="toggle-container">
+        <span class="toggle-label">OFF</span>
+        <label for="curtainControl" class="toggle">
+          <input type="checkbox" id="curtainControl" name="curtainControl" value="curtainControl">
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">ON</span>
+      </div>
     </div>
 
     <div class="controller">
       <h2>Control de persianas</h2>
-      <label for="blindControl" class="toggle">
-        <input type="checkbox" id="blindControl" name="blindControl" value="blindControl">
-        <span class="slider"></span>
+      <div class="toggle-container">
+        <span class="toggle-label">OFF</span>
+        <label for="blindControl" class="toggle">
+          <input type="checkbox" id="blindControl" name="blindControl" value="blindControl">
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">ON</span>
+      </div>
     </div>
   </section>
 

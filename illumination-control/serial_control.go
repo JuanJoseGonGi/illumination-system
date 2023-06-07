@@ -66,6 +66,16 @@ func sendSerial(msg []byte) error {
 	return nil
 }
 
+func setLightsModeState(state state) error {
+	msg := []byte(fmt.Sprintf("lights_mode %s\n", state))
+	err := sendSerial(msg)
+	if err != nil {
+		return fmt.Errorf("failed to set lights mode state: %w", err)
+	}
+
+	return nil
+}
+
 func setLightsState(state state) error {
 	msg := []byte(fmt.Sprintf("lights %s\n", state))
 	err := sendSerial(msg)

@@ -54,6 +54,39 @@ async function getSensorsState() {
   }
 }
 
+async function changeLightModeState(state) {
+  if (!Object.prototype.hasOwnProperty.call(STATES, state)) {
+    throw new Error("Estado inválido.");
+  }
+
+  const body = {
+    state,
+  }
+
+  await apiRequest("/lights/mode", "PUT", body);
+}
+
+function lightModeControlHandler(event) {
+  const lightControlLabel = document.querySelector(".toggle[for='lightControl']");
+
+  const lightModeControl = event.target;
+  if (lightModeControl.checked) {
+    changeLightModeState(STATES.on).catch(handleError);
+    if (lightControlLabel) {
+      // @ts-ignore
+      lightControlLabel.style.display = "none";
+    }
+    return;
+  }
+
+  changeLightModeState(STATES.off).catch(handleError);
+
+  if (lightControlLabel) {
+    // @ts-ignore
+    lightControlLabel.style.display = "inline-flex";
+  }
+}
+
 async function changeLightState(state) {
   if (!Object.prototype.hasOwnProperty.call(STATES, state)) {
     throw new Error("Estado inválido.");
@@ -126,6 +159,12 @@ function handleError(error) {
 }
 
 function main() {
+  const lightModeControl = document.getElementById("lightModeControl");
+  if (!lightModeControl) {
+    handleError(new Error("No se encontró el control de modo de luces."));
+    return;
+  }
+
   const lightControl = document.getElementById("lightControl");
   if (!lightControl) {
     handleError(new Error("No se encontró el control de luces."));
@@ -144,6 +183,7 @@ function main() {
     return;
   }
 
+  lightModeControl.addEventListener("change", lightModeControlHandler);
   lightControl.addEventListener("change", lightControlHandler);
   curtainControl.addEventListener("change", curtainControlHandler);
   blindControl.addEventListener("change", blindControlHandler);
