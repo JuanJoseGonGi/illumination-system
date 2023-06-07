@@ -23,6 +23,8 @@ func getPortsList() ([]string, error) {
 		return nil, fmt.Errorf("no ports found")
 	}
 
+	log.Infof("list ports found for %v", ports)
+
 	return ports, nil
 }
 

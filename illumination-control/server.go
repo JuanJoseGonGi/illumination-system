@@ -14,7 +14,7 @@ import (
 var mux = http.NewServeMux()
 
 var server = &http.Server{
-	Addr:    ":8080",
+	Addr:    ":3001",
 	Handler: mux,
 }
 

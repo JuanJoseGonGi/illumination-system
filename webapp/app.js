@@ -3,7 +3,7 @@ const STATES = {
   off: "off",
 }
 
-const API_DOMAIN = "http://localhost:8080";
+const API_DOMAIN = "http://localhost:3001";
 
 /**
  * Realiza una petición a la API.
