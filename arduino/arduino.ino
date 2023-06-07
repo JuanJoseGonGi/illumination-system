@@ -1,5 +1,6 @@
 #include <Servo.h>
 
+bool isAutomatic = false;
 int fotoresistor = A2;
 int valueLDR, valuePIRLED;
 int ledLDR = 22;
@@ -24,6 +25,7 @@ void setup() {
   pinMode(fotoresistor, INPUT);
   pinMode(pinPIR, INPUT);
   pinMode(ledLDR, OUTPUT);
+  digitalWrite(ledLDR, HIGH);
   servo.attach(MOTORSERVO, minPulse, minPulse); //servo
   pinMode(pin9, OUTPUT);
   pinMode(pin10, OUTPUT);
@@ -34,9 +36,14 @@ void setup() {
 
 void loop() {
   delay(100);
-  //ctrlLDR();
-  ctrlPIR();
-  ctrlR2r();
+  if (isAutomatic) {
+    ctrlLDR();
+    ctrlPIR();
+    //ctrlR2r();
+  }
+  
+  
+  readSerialController();
 }
 
 void ctrlLDR() {
@@ -77,29 +84,32 @@ void ctrlPIR(){
   Serial.println(valuePIRLED);
 }
 
-void ctrlR2r(){
-  digitalWrite(pin9, HIGH);
-  digitalWrite(pin10, HIGH);
-  digitalWrite(pin11, HIGH);
-  digitalWrite(pin12, HIGH);
-}
+// void ctrlR2r(){
+//   digitalWrite(pin9, HIGH);
+//   digitalWrite(pin10, HIGH);
+//   digitalWrite(pin11, HIGH);
+//   digitalWrite(pin12, HIGH);
+// }
 
 void turnOnLed(){
   analogWrite(ledLDR, 255);
   playAlarm();
+  stopAlarm();
 }
 
 void turnOffLed(){
   analogWrite(ledLDR, 0);
   playAlarm();
+  stopAlarm();
 }
 
 void openCurtain(){
-  analogWrite(6, 255);
-  analogWrite(7, 255);
+  analogWrite(6, 200);
+  analogWrite(7, 200);
   analogWrite(5, 0);
   analogWrite(4, 0);
   playAlarm();
+  stopAlarm();
 }
 
 void closeCurtain(){
@@ -108,16 +118,19 @@ void closeCurtain(){
   analogWrite(5, 255);
   analogWrite(4, 255);
   playAlarm();
+  stopAlarm();
 }
 
 void openBlinds(){
   servo.write(90);
   playAlarm();
+  stopAlarm();
 }
 
 void cloneBlinds(){
   servo.write(20);
   playAlarm();
+  stopAlarm();
 }
 
 void playAlarm(){
@@ -125,11 +138,19 @@ void playAlarm(){
   digitalWrite(pin10, HIGH);
   digitalWrite(pin11, HIGH);
   digitalWrite(pin12, HIGH);
+  delay(1000);
 }
 
-void readSerialController(String command){
+void stopAlarm(){
+  digitalWrite(pin9, LOW);
+  digitalWrite(pin10, LOW);
+  digitalWrite(pin11, LOW);
+  digitalWrite(pin12, LOW);
+}
+
+void readSerialController(){
   if (Serial.available()){
-    command = Serial.readStringUntil('\n');
+    String command = Serial.readStringUntil('\n');
 
     if (command.startsWith("lights"))
     {
@@ -137,11 +158,6 @@ void readSerialController(String command){
     }
 
     else if (command.startsWith("curtains"))
-    {
-      handleCurtains(command);
-    }
-
-    else if (command.startsWith("blinds"))
     {
       handleCurtains(command);
     }
@@ -155,15 +171,15 @@ void handleLights(String command)
 
   if (state == "on")
   {
-    turnOnLed();
-    Serial.println("Lights turned on");
+    turnOffLed();
+    Serial.println("Lights turned off");
     return;
   }
 
   if (state == "off")
   {
-    turnOffLed();
-    Serial.println("Lights turned off");
+    turnOnLed();
+    Serial.println("Lights turned on");
     return;
   }
 
@@ -208,6 +224,28 @@ void handleBlindss(String command)
   {
     cloneBlinds();
     Serial.println("Blinds closed");
+    return;
+  }
+
+  Serial.println("Unknown command for curtains");
+}
+
+void handleLightsMode(String command)
+{
+  String state = command.substring(9); // get the state part
+  state.trim();                        // remove trailing newline and spaces
+
+  if (state == "on")
+  {
+    isAutomatic = true;
+    Serial.println("Automatic");
+    return;
+  }
+
+  if (state == "off")
+  {
+    isAutomatic = false;
+    Serial.println("Manual");
     return;
   }
 
