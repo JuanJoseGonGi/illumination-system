@@ -140,11 +140,6 @@ void readSerialController(String command){
     {
       handleCurtains(command);
     }
-
-    else if (command.startsWith("blinds"))
-    {
-      handleCurtains(command);
-    }
   }
 }
 
