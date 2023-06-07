@@ -50,8 +50,6 @@ func initSerial() error {
 		return err
 	}
 
-	defer closeOrLog(openedPort)
-
 	return nil
 }
 
