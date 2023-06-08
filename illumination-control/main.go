@@ -7,11 +7,13 @@ import (
 )
 
 func main() {
-	err := initSerial()
+	openedPort, err := initSerial()
 	if err != nil {
 		log.Error(err.Error())
 		os.Exit(1)
 	}
+
+	defer openedPort.Close()
 
 	initServer()
 }

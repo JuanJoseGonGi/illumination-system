@@ -39,18 +39,34 @@ func openPort(portName string) (serial.Port, error) {
 	return port, nil
 }
 
-func initSerial() error {
+func listenSerial() {
+	buf := make([]byte, 128)
+
+	for {
+		n, err := openedPort.Read(buf)
+		if err != nil {
+			log.Error("failed to read from port", "err", err)
+			continue
+		}
+
+		log.Info("received message", "msg", string(buf[:n]))
+	}
+}
+
+func initSerial() (serial.Port, error) {
 	ports, err := getPortsList()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	openedPort, err = openPort(ports[0])
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	go listenSerial()
+
+	return openedPort, nil
 }
 
 func sendSerial(msg []byte) error {
