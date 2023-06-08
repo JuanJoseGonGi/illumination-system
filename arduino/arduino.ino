@@ -294,7 +294,10 @@ void handleLightsMode(String command)
 
 void stopEngine()
 {
-  runEngine(0, 0, 0, 0);
+  analogWrite(6, 0);
+  analogWrite(7, 0);
+  analogWrite(5, 0);
+  analogWrite(4, 0);
   isEngineOn = false;
   Serial.println("Engine stopped");
 }
